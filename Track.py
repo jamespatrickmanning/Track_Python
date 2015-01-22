@@ -93,6 +93,8 @@ plt.title('Drifter: {0} {1} track'.format(drifter_ID,MODE))
 ################
 def animate(n):  # the function of the animation
     #ax.cla()
+    #del ax.lines() #apply to plot
+    #del ax.collection() #apply to scatter
     ax.plot(fc_set['lons'][n],fc_set['lats'][n],'ro',markersize=4,label='%s'%MODE) #'%d'%n 
     if n<len(dr_set['lons']):
         po = (dr_set['lons'][n]+0.005,dr_set['lats'][n]+0.005)
