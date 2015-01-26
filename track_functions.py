@@ -439,7 +439,7 @@ class get_roms(track):
         return points
         '''
         data = self.get_data(url)
-        nodes = dict(lon=[], lat=[])
+        nodes = dict(lon=[lon], lat=[lat])
         #mask = data['mask_rho'][:]
         lons = data['lon_rho'][:]
         lats = data['lat_rho'][:]
@@ -685,7 +685,7 @@ class get_fvcom(track):
         siglay = data['siglay'][:]        
         if lon>90:
             lon, lat = dm2dd(lon, lat)
-        nodes = dict(lon=[], lat=[])
+        nodes = dict(lon=[lon], lat=[lat])
         kf,distanceF = self.nearest_point_index(lon,lat,lonc,latc)#,num=1
         kv,distanceV = self.nearest_point_index(lon,lat,lonv,latv)
         if not kv:
