@@ -12,19 +12,19 @@ import sys
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import pytz
-from track_functions import get_drifter,get_fvcom,get_roms,draw_basemap,distance,uniquecolors
+from M_track_functions import get_drifter,get_fvcom,get_roms,draw_basemap,distance,uniquecolors
 from matplotlib import animation
 st_run_time = datetime.now() # Caculate the time running the code with en_run_time 
 ######################### Option ##############################
 drifter_ID = 140430701 #[140410704,140410706,140410707,140410708,140410709] 140410701]
 # if raw data, use "drift_X.dat";if want to get drifter data in database, use "None"
 INPUT_DATA = 'drift_X.dat' 
-MODEL = 'FVCOM'              # 'FVCOM', 'ROMS' or 'BOTH'                  
+MODEL = 'ROMS'              # 'FVCOM', 'ROMS' or 'BOTH'                  
 GRID = 'massbay'            # '30yr', 'massbaya', 'GOM3a', 'GOM3' or 'massbay'
 MODE = 'FORECAST'           # 'FORECAST' or 'HINDCAST'
 DEPTH = -1.               # depth of drogue in meters
 DAYS = 3                     # Length of time wanted in track
-run_time = datetime(2015,1,4,0,0,0,0,pytz.UTC)
+run_time = datetime(2015,1,24,0,0,0,0,pytz.UTC)
 print "Drifter: %s track %d days"%(drifter_ID,DAYS)
 ########################## Extract points ##################################
 dr_set={'lats':[],'lons':[]}  # collect points of Drifter
@@ -53,7 +53,7 @@ for i in range(DAYS):
     if MODEL in ('ROMS', 'BOTH'):
         get_obj = get_roms()
         url_roms = get_obj.get_url(start_time, end_time)
-        point = get_obj.get_track(st_point[0],st_point[1],DEPTH,url_roms)
+        point = get_obj.get_track(st_point[0],st_point[1],DEPTH,url_roms) #includes start point
     print len(point['lon'])
     n = len(dr_points['lat'])  # Quantity of one-day's drifter points
     #save the the same quantity of drifter
@@ -105,7 +105,7 @@ def animate(n):  # the function of the animation
             ax.annotate(an[2],xy=po,xytext=pt,fontsize=6,arrowprops=dict(arrowstyle="wedge"))
         if n==(a[2]-1):
             ax.annotate(an3,xy=po,xytext=pt,fontsize=6,arrowprops=dict(arrowstyle="wedge"))
-        ax.plot(dr_set['lons'][n],dr_set['lats'][n],'bo',markersize=6,label='drifter')   
+        ax.plot(dr_set['lons'][n],dr_set['lats'][n],'bo-',markersize=6,label='drifter')   
 anim = animation.FuncAnimation(fig, animate, frames=len(fc_set['lons']), interval=50)
 plt.legend(loc='lower right',fontsize=10)
 ###################################################
