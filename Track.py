@@ -81,7 +81,7 @@ f_file.close()
 points = {'lats':[],'lons':[]}  # collect all points we've gained
 points['lats'].extend(dr_set['lats']); points['lons'].extend(dr_set['lons'])
 points['lats'].extend(fc_set['lats']); points['lons'].extend(fc_set['lons'])
-fig = plt.figure()
+fig = plt.figure() #figsize=(16,9)
 ax = fig.add_subplot(111)
 draw_basemap(fig, ax, points)
 ax.plot(dr_set['lons'][0],dr_set['lats'][0],'c.',markersize=16) #,label='Startpoint'
@@ -113,5 +113,5 @@ en_run_time = datetime.now()
 print 'Take '+str(en_run_time-st_run_time)+' run the code. End at '+str(en_run_time)
 #anim.save('%s multi-days_demo.mp4'%drifter_ID, writer='mencoder',fps=10,dpi=200) 
 anim.save('%s-demo_%s.gif'%(drifter_ID,en_run_time.strftime("%d-DEC-%H:%M")),
-          writer='imagemagick',fps=10,dpi=100) #ffmpeg,imagemagick,mencoder fps=20
+          writer='imagemagick',fps=10,dpi=200) #ffmpeg,imagemagick,mencoder fps=20
 plt.show()
