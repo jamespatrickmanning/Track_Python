@@ -44,8 +44,8 @@ for i in range(DAYS):
     st_point = (dr_points['lon'][0],dr_points['lat'][0])
     start_time = dr_points['time'][0]  # start time of the MODEL
     end_time = start_time + timedelta(1)
-    a[i] = len(dr_set['lats']); an[i] = start_time.strftime('%m/%d') # %H:%M
-    print len(dr_points['lon']),an[i]
+    a[i] = len(dr_set['lats']); an[i] = start_time.strftime('%m/%d-%H:%M') # 
+    print a[i],an[i]
     if MODEL in ('FVCOM','BOTH'):
         get_obj = get_fvcom(GRID)
         url_fvcom = get_obj.get_url(start_time,end_time)
@@ -54,17 +54,17 @@ for i in range(DAYS):
         get_obj = get_roms()
         url_roms = get_obj.get_url(start_time, end_time)
         point = get_obj.get_track(st_point[0],st_point[1],DEPTH,url_roms) #includes start point
-    print len(point['lon'])
+    #print len(point['lon'])
     n = len(dr_points['lat'])  # Quantity of one-day's drifter points
     #save the the same quantity of drifter
     fc_set['lons'].extend(point['lon'][:n]); fc_set['lats'].extend(point['lat'][:n])
-    for h in zip(point['lat'],point['lon']): f_file.write('%f,%f\n'%h)
+    for h in zip(point['lat'][:n],point['lon'][:n]): f_file.write('%f,%f\n'%h)
 d_file.close()
 '''forcast two days of the last drifter point.'''
 start_time = dr_points['time'][-1]
-print start_time 
+print 'Last point 2-days forcast.',start_time 
 end_time = start_time + timedelta(2)
-an3 = start_time.strftime('%m/%d') # %H:%M
+an3 = start_time.strftime('%m/%d-%H:%M') # %H:%M
 st_point = (dr_set['lons'][-1],dr_set['lats'][-1])  # Position of the last drifter point
 if MODEL in ('FVCOM','BOTH'):
     get_obj = get_fvcom(GRID)
@@ -99,9 +99,9 @@ def animate(n):  # the function of the animation
     if n<len(dr_set['lons']):
         po = (dr_set['lons'][n]+0.005,dr_set['lats'][n]+0.005)
         pt = (dr_set['lons'][n]+0.03,dr_set['lats'][n]+0.03)
-        if n==(a[0]-1):
+        if n==a[0]:
             ax.annotate(an[1],xy=po,xytext=pt,fontsize=6,arrowprops=dict(arrowstyle="wedge"))
-        if n==(a[1]-1):
+        if n==a[1]:
             ax.annotate(an[2],xy=po,xytext=pt,fontsize=6,arrowprops=dict(arrowstyle="wedge"))
         if n==(a[2]-1):
             ax.annotate(an3,xy=po,xytext=pt,fontsize=6,arrowprops=dict(arrowstyle="wedge"))
@@ -113,5 +113,5 @@ en_run_time = datetime.now()
 print 'Take '+str(en_run_time-st_run_time)+' run the code. End at '+str(en_run_time)
 #anim.save('%s multi-days_demo.mp4'%drifter_ID, writer='mencoder',fps=10,dpi=200) 
 anim.save('%s-demo_%s.gif'%(drifter_ID,en_run_time.strftime("%d-DEC-%H:%M")),
-          writer='imagemagick',fps=10,dpi=200) #ffmpeg,imagemagick,mencoder fps=20
+          writer='imagemagick',fps=5,dpi=150) #ffmpeg,imagemagick,mencoder fps=20
 plt.show()
