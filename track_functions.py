@@ -1005,7 +1005,7 @@ def draw_basemap(fig, ax, points, interval_lon=0.3, interval_lat=0.3):
     
     lons = points['lons']
     lats = points['lats']
-    size = max((max(lons)-min(lons)),(max(lats)-min(lats)))/2
+    size = max((max(lons)-min(lons)),(max(lats)-min(lats)))/4
     map_lon = [min(lons)-size,max(lons)+size]
     map_lat = [min(lats)-size,max(lats)+size]
     
