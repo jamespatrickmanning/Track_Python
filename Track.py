@@ -16,7 +16,7 @@ from track_functions import get_drifter,get_fvcom,get_roms,draw_basemap,distance
 from matplotlib import animation
 st_run_time = datetime.now() # Caculate the time running the code with en_run_time 
 ######################### Option ##############################
-drifter_ID = 140430701 #[140410704,140410706,140410707,140410708,140410709] 140410701]
+drifter_ID = 140420691 #[140410704,140410706,140410707,140410708,140410709] 140430701]
 # if raw data, use "drift_X.dat";if want to get drifter data in database, use "None"
 INPUT_DATA = 'drift_X.dat' 
 MODEL = 'ROMS'              # 'FVCOM', 'ROMS' or 'BOTH'                  
@@ -36,7 +36,7 @@ an0=str();an1=str();an2=str()  # record the start time of the marked points
 a = [a0,a1,a2]; an = [an0,an1,an2]
 for i in range(DAYS):    
     begin_time = run_time + timedelta(i)  # add one day with the looping 
-    print '%dth day, start at %s'%((i+1),begin_time.strftime('%m/%d/%Y %H:%M'))
+    print '%dth day.'%(i+1)  #,begin_time.strftime('%m/%d/%Y %H:%M'))
     drifter = get_drifter(drifter_ID, INPUT_DATA)
     dr_points = drifter.get_track(begin_time,1)
     dr_set['lons'].extend(dr_points['lon']); dr_set['lats'].extend(dr_points['lat'])
@@ -45,7 +45,7 @@ for i in range(DAYS):
     start_time = dr_points['time'][0]  # start time of the MODEL
     end_time = start_time + timedelta(1)
     a[i] = len(dr_set['lats']); an[i] = start_time.strftime('%m/%d-%H:%M') # 
-    print a[i],an[i]
+    print 'Drifter points',a[i],an[i]
     if MODEL in ('FVCOM','BOTH'):
         get_obj = get_fvcom(GRID)
         url_fvcom = get_obj.get_url(start_time,end_time)
