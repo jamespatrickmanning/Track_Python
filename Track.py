@@ -95,7 +95,7 @@ def animate(n):  # the function of the animation
     #ax.cla()
     #del ax.lines() #apply to plot
     #del ax.collection() #apply to scatter
-    if n<12:
+    if n<a[0]:
         if n==0:
             po = (dr_set['lons'][n]+0.005,dr_set['lats'][n]+0.005)
             pt = (dr_set['lons'][n]+0.03,dr_set['lats'][n]+0.03)
