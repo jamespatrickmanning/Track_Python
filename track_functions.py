@@ -13,11 +13,13 @@ import colorsys
 def distance(origin, destination):
     """ 
     Calculates both distance and bearing
+    note: "origin" and "destintation" are tuples (lat,lon) 
+    note: if user inputs lat & lon as degrees-minutes (ddmm.m), it will convert to decimal degrees (dd.dddd)
     """
     lat1, lon1 = origin
     lat2, lon2 = destination
     if lat1>1000:
-        (lat1,lon1)=dm2dd(lat1,lon1)
+        (lat1,lon1)=dm2dd(lat1,lon1) # this is the conversion from degrees-minutes to decimal degrees
         (lat2,lon2)=dm2dd(lat2,lon2)
         print 'converted to from ddmm to dd.ddd'
     radius = 6371 # km
@@ -79,10 +81,14 @@ def getrawdrift(did,filename):
 
 def getdrift(did):
     """
+    routine to get drifter data from archive based on drifter id (did)
     -assumes "import pandas as pd" has been issued above
     -get remotely-stored drifter data via ERDDAP
     -input: deployment id ("did") number where "did" is a string
     -output: time(datetime), lat (decimal degrees), lon (decimal degrees), depth (meters)
+    
+    note: there is another function below called "data_extracted" that does a similar thing returning a dictionary
+    
     Jim Manning June 2014
     """
     url = 'http://comet.nefsc.noaa.gov:8080/erddap/tabledap/drifters.csv?time,latitude,longitude,depth&id="'+did+'"&orderBy("time")'
@@ -184,7 +190,7 @@ def shrink(a,b):
 
 def data_extracted(filename,drifter_id=None,starttime=None):
     '''
-    get a dict made of time, lon, lat from local file.
+    get a dictionary called "data" made of time, lon, lat from local file.
     filename: local file diretory
     drifter_id: the specific data of some id you want.
     starttime: have to be input with drifter_id, or just drifter_id.
@@ -230,7 +236,7 @@ def data_extracted(filename,drifter_id=None,starttime=None):
     #         data['lon'] = dlon[i[0]:i[-1]+1][j[0]:]
     #         data['lat'] = dlat[i[0]:i[-1]+1][j[0]:]
     #     except ValueError:
-   #         data['time'] = dtime[i[0]:i[-1]+1]
+    #         data['time'] = dtime[i[0]:i[-1]+1]
     #         data['lon'] = dlon[i[0]:i[-1]+1]
     #         data['lat'] = dlat[i[0]:i[-1]+1]
     # except ValueError:
@@ -658,7 +664,7 @@ class get_fvcom(track):
         
     def get_track(self, lon, lat, depth, url):
         '''
-        Get forcast nodes start at lon,lat
+        Get forecast nodes start at lon,lat
         '''
         if type(url) is str:
             nodes = dict(lon=[lon],lat=[lat])
