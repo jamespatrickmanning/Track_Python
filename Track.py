@@ -3,8 +3,8 @@
 Created on Wed Dec 10 15:54:43 2014
 Derived from previous particle tracking work by Manning, Muse, Cui, Warren.
 This now generates an animation if requested.
-This project lay out drifter track and the forcast track in latest three days,and forcast 
-drifter track for two days finally. 
+This project plots both the drifter track and forcast track for the last three days and forecasts 
+the drifter track for the next two days. 
 @author: bling
 """
 
@@ -20,36 +20,36 @@ drifter_ID = 140420691 #[140410704,140410706,140410707,140410708,140410709] 1404
 # if raw data, use "drift_X.dat";if want to get drifter data in database, use "None"
 INPUT_DATA = 'drift_X.dat' 
 MODEL = 'ROMS'              # 'FVCOM', 'ROMS' or 'BOTH'                  
-GRID = 'massbay'            # '30yr', 'massbaya', 'GOM3a', 'GOM3' or 'massbay'
+GRID = 'massbay'            # '30yr', 'massbaya', 'GOM3a', 'GOM3' or 'massbay' (needed foe FVCOM model only)
 MODE = 'FORECAST'           # 'FORECAST' or 'HINDCAST'
 DEPTH = -1.               # depth of drogue in meters
 DAYS = 3                     # Length of time wanted in track
 run_time = datetime(2015,1,24,0,0,0,0,pytz.UTC)
 print "Drifter: %s track %d days"%(drifter_ID,DAYS)
 ########################## Extract points ##################################
-dr_set={'lats':[],'lons':[]}  # collect points of Drifter
-fc_set={'lats':[],'lons':[]}  # collect points of MODEL
+dr_set={'lats':[],'lons':[]}  # initialize all points of Drifter
+fc_set={'lats':[],'lons':[]}  # initialize points of MODEL
 d_file = open('dr_points.txt','w') # opens an output file for portion of drifters simulated
 f_file = open('fc_points.txt','w') # opens an output file for modeled track
-a0=int();a1=int();a2=int()  # use to record position of the marked points of the list
-an0=str();an1=str();an2=str()  # record the start time of the marked points
+a0=int();a1=int();a2=int()  # use to record position of the labeled points on the track
+an0=str();an1=str();an2=str()  # record the start time of the labeled points
 a = [a0,a1,a2]; an = [an0,an1,an2]
 for i in range(DAYS):    
-    begin_time = run_time + timedelta(i)  # add one day with the looping 
+    begin_time = run_time + timedelta(i)  # add one day with each time through the for-loop
     print '%dth day.'%(i+1)  #,begin_time.strftime('%m/%d/%Y %H:%M'))
     drifter = get_drifter(drifter_ID, INPUT_DATA)
-    dr_points = drifter.get_track(begin_time,1)
+    dr_points = drifter.get_track(begin_time,1) # gets drifter track beginning at begin_time
     dr_set['lons'].extend(dr_points['lon']); dr_set['lats'].extend(dr_points['lat'])
-    for h in zip(dr_points['lat'],dr_points['lon']): d_file.write('%f,%f\n'%h)
-    st_point = (dr_points['lon'][0],dr_points['lat'][0])
+    for h in zip(dr_points['lat'],dr_points['lon']): d_file.write('%f,%f\n'%h) #saves drifter specified data to file
+    st_point = (dr_points['lon'][0],dr_points['lat'][0]) # to be used later to start the model
     start_time = dr_points['time'][0]  # start time of the MODEL
-    end_time = start_time + timedelta(1)
+    end_time = start_time + timedelta(1) # assumes you are only stepping through one day
     a[i] = len(dr_set['lats']); an[i] = start_time.strftime('%m/%d-%H:%M') # 
     print 'Drifter points',a[i],an[i]
     if MODEL in ('FVCOM','BOTH'):
         get_obj = get_fvcom(GRID)
         url_fvcom = get_obj.get_url(start_time,end_time)
-        point = get_obj.get_track(st_point[0],st_point[1],DEPTH,url_fvcom)
+        point = get_obj.get_track(st_point[0],st_point[1],DEPTH,url_fvcom) # where "point" output is a dictionary result
     if MODEL in ('ROMS', 'BOTH'):
         get_obj = get_roms()
         url_roms = get_obj.get_url(start_time, end_time)
@@ -60,10 +60,10 @@ for i in range(DAYS):
     fc_set['lons'].extend(point['lon'][:n]); fc_set['lats'].extend(point['lat'][:n])
     for h in zip(point['lat'][:n],point['lon'][:n]): f_file.write('%f,%f\n'%h)
 d_file.close()
-'''forcast two days of the last drifter point.'''
+'''forecast two days after the last drifter point.'''
 start_time = dr_points['time'][-1]
-print 'Last point 2-days forcast.',start_time 
-end_time = start_time + timedelta(2)
+print 'Beginning of 2-days forcast.',start_time 
+end_time = start_time + timedelta(2) # assumes 2-day forecast
 an3 = start_time.strftime('%m/%d-%H:%M') # %H:%M
 st_point = (dr_set['lons'][-1],dr_set['lats'][-1])  # Position of the last drifter point
 if MODEL in ('FVCOM','BOTH'):
